@@ -1,198 +1,234 @@
-# A Bounded Software Model for Deterministic Contract Execution and Replay
+# A Bounded Software Framework for Studying Reproducible Execution
 
 **Manuscript status:** Research report draft  
-**Version:** 1.0  
-**Date:** 15 October 2026
-**Author:** Andreas Bender, EPC Research Lead
+**Version:** 2.0 (Public Research Edition)  
+**Date:** November 2026  
+**Author:** Andreas Bender
 
-## Abstract
+---
 
-This paper examines a strictly bounded, software-based execution model for
-deterministic contract and replay execution, together with a parameterized x64
-simulator that maps declared pipeline, memory, and control-flow events to
-abstract model cycles. The EPC system consists of a versioned operator
-runtime, a validated execution contract, and a deterministic simulator
-profile. It guarantees reproducibility only for registered operators,
-normalized inputs, and fully controlled event traces; uncontrolled or live
-sources receive no replay guarantee. The simulator does not model a real
-microarchitecture, but instead provides a well-defined deterministic
-abstraction with documented limits.
+# Abstract
 
-We evaluate the system using a ten-run cross-process replay test and three
-synthetic workloads on a single x64 host. All ten independent processes
-produce byte-identical canonical states and model traces. The workload
-measurements report native wall-clock time, EPC runtime time, setup costs, and
-abstract model cycles separately; model cycles are not CPU cycles and are not
-interpreted as hardware predictions. The results show reproducible execution
-and simulation within the stated guarantee boundaries. We discuss
-methodological limitations, the distinction from real microarchitectures, and
-threats to validity. This paper is an evidence-based report on a deterministic
-software model, not a novelty claim or a claim of hardware simulation.
+Reproducibility remains a persistent challenge in modern software systems. Execution results may depend on inputs, configuration, environment, timing, implementation decisions, and external influences that are not always visible or controlled.
 
-**Keywords:** deterministic execution; software replay; execution contracts;
-abstract simulation; reproducibility
+This work investigates reproducibility within explicitly bounded software environments. The focus is not hardware modeling, architecture design, performance optimization, or implementation techniques. Instead, the study examines how reproducibility can be evaluated when assumptions, inputs, execution conditions, and comparison criteria are explicitly declared.
 
-## 1. Introduction
+The framework presented here serves as a research vehicle for analyzing execution reproducibility under controlled conditions. Results are interpreted only within the defined evaluation boundary and should not be generalized beyond the studied environment.
 
-Reproducing a software result requires a clear boundary around the inputs that
-can affect execution and a precise definition of the output being compared.
-External events, runtime behavior, and implementation choices can all affect
-an execution. A reproducibility statement is therefore meaningful only when
-its assumptions and limits are explicit.
+**Keywords:** reproducibility, software execution, bounded systems, evaluation methodology, repeatability
 
-This study considers a bounded software model that combines a validated
-execution contract, a versioned runtime for registered operators, and a
-deterministic simulator profile. Its focus is reproducibility within a
-declared software boundary. It does not attempt to control a physical
-processor or assert that its simulator reproduces the behavior of one.
+---
 
-The paper addresses two questions:
+# 1. Introduction
 
-1. Does the tested configuration produce identical canonical state and model
-   traces in independent processes?
-2. How can wall-clock observations and abstract model costs be reported
-   separately without conflating their meanings?
+## Motivation
 
-The goal is to document the evidence for this bounded model and to make its
-limitations clear. We do not claim that the design is novel, that the results
-generalize to arbitrary programs, or that abstract costs predict hardware
-performance.
+Modern computational systems execute within increasingly complex environments.
 
-## 2. Scope and terminology
+Execution outcomes may depend on numerous factors including software configuration, infrastructure choices, timing effects, external services, implementation details, operating-system behavior, and environmental influences.
 
-The term **deterministic execution** in this paper refers only to the
-contract-bounded configuration under evaluation. The guarantee applies to
-registered operators, normalized input, and fully controlled event traces.
-Uncontrolled or live sources are outside that guarantee.
+Under such conditions, discussing reproducibility requires explicit assumptions and clear boundaries.
 
-The term **model cycle** denotes an abstract cost produced by the declared
-simulator model. It is not a physical CPU cycle, a performance-counter
-measurement, or a prediction of wall-clock time.
+Without a documented scope, claims about reproducibility become difficult to evaluate, compare, or verify.
 
-The simulator is an x64-hosted abstraction over declared pipeline, memory, and
-control-flow events. The architecture label describes the intended context of
-the model; it does not imply fidelity to any specific x64 processor. The
-simulator's documented boundaries are part of the result and must accompany
-any interpretation of its output.
+This paper explores reproducibility as a bounded property rather than a universal guarantee.
 
-## 3. System overview
+---
 
-At a high level, the evaluated system has three parts:
+## Research Question
 
-- A **versioned execution contract** defines the bounded execution context.
-- A **registered-operator runtime** executes within that context and supports
-  replay only when the relevant event trace is controlled.
-- A **deterministic simulator profile** maps declared events to abstract model
-  costs and produces a model trace.
+The central question investigated is:
 
-This overview is intentionally non-operational. It does not specify internal
-interfaces, data formats, validation rules, event encodings, algorithms,
-parameter values, or implementation steps. The paper does not provide enough
-information to recreate or substitute for the system.
+> Under what conditions can software execution outcomes be meaningfully compared across repeated runs within a declared execution boundary?
 
-## 4. Evaluation
+The objective is not to eliminate variability from all software systems.
 
-### 4.1 Cross-process replay test
+The objective is to establish a framework through which reproducibility claims can be stated, evaluated, and interpreted within clearly documented assumptions.
 
-The replay evaluation launches ten independent processes using the same
-tested configuration. It compares canonical state and model traces across
-those runs. All ten processes produce byte-identical results for the tested
-case.
+---
 
-This observation is bounded to that test configuration. It is not evidence
-for arbitrary registered code, untested event patterns, other runtime
-versions, or other hosts. A ten-run test is not a proof of universal
-determinism.
+# 2. Scope and Terminology
 
-### 4.2 Synthetic workload measurements
+This publication adopts the following terminology.
 
-Three synthetic workloads were evaluated on a single x64 host. The report
-keeps native wall-clock measurements, EPC runtime measurements, setup costs,
-and abstract model cycles distinct. The workloads and host provide a
-descriptive reference point for the evaluated artifact only.
+### Reproducibility
 
-The EPC execution path and the native baseline do not perform identical work.
-Consequently, their timing difference must not be interpreted as a like-for-
-like speed comparison. Timing observations from one host do not establish
-general performance characteristics.
+Reproducibility refers to the consistent generation of comparable outcomes under explicitly declared conditions.
 
-### 4.3 Interpretation
+No statement is made regarding arbitrary environments, uncontrolled systems, or unrestricted software behavior.
 
-The experiment supports the limited statement that the tested execution
-configuration reproduced the selected canonical outputs and model traces
-across ten independent processes. The simulator also provides deterministic
-outputs for its declared abstraction. The results do not establish that the
-simulator predicts physical execution or that the measured timing is
-representative of other workloads or systems.
+---
 
-The underlying raw results and implementation are not included in this
-publication package. The public package is not a runnable EPC artifact; the
-availability boundary is described in
-[`ARTIFACT-AND-DATA-AVAILABILITY.md`](ARTIFACT-AND-DATA-AVAILABILITY.md).
+### Execution Boundary
 
-## 5. Related work
+An execution boundary defines the assumptions under which observations are interpreted.
 
-Deterministic replay and processor simulation are established areas of
-research. Prior work such as ODR and DoublePlay studies replay in broader
-execution contexts, while gem5 is a configurable architecture simulation
-infrastructure. EPC's claims here are narrower: a bounded software execution
-model and a deterministic abstract cost profile. The systems differ in
-purpose, abstraction, and evaluation scope; this paper makes no comparative
-performance or novelty claim. Full citations are in
-[`REFERENCES.md`](REFERENCES.md).
+It may include:
 
-## 6. Threats to validity
+- inputs,
+- configuration,
+- environment,
+- evaluation criteria,
+- observation conditions.
 
-- **Scope of replay:** Only the tested configuration is covered. The result
-  does not prove determinism for arbitrary operators, uncontrolled sources,
-  or untested conditions.
-- **Number of configurations:** Ten independent processes exercise one
-  configuration, not a broad sample of contracts or runtime environments.
-- **Workload representativeness:** Three synthetic workloads on one host
-  cannot establish performance on production applications or other hosts.
-- **Measurement interpretation:** Native and EPC timings correspond to
-  different work. Their difference is not an equivalent-workload comparison.
-- **Model validity:** Abstract cycles are defined by the simulator profile;
-  no claim is made that they match physical CPU cycles or hardware counters.
-- **External validity:** A single-host evaluation cannot establish
-  cross-platform behavior.
-- **Reproducibility of publication artifacts:** This public package omits
-  implementation and raw measurement artifacts by design. Independent
-  re-execution of the reported study is therefore not possible from this
-  package alone.
+The precise mechanism used to establish these boundaries is outside the scope of this publication.
 
-## 7. Conclusion
+---
 
-This study reports a bounded software model for contract-based execution,
-controlled replay, and deterministic abstract simulation. In the evaluated
-case, ten independent processes produced byte-identical canonical states and
-model traces. Three synthetic workloads were measured on one x64 host, with
-wall-clock observations and abstract model cycles treated as separate
-quantities.
+### Evaluation Outcome
 
-These findings support only the stated, configuration-specific conclusions.
-They do not establish general determinism, hardware prediction, physical
-microarchitectural fidelity, cross-platform performance, or novelty. The
-implementation and detailed artifacts are intentionally not part of this
-public package.
+An evaluation outcome denotes any observable result used for comparison during experimentation.
 
-## Declarations
+Outcomes are interpreted only within the conditions under which they were observed.
 
-### Data and artifact availability
+---
 
-This publication package contains no executable artifact or raw measurement
-data. See
-[`ARTIFACT-AND-DATA-AVAILABILITY.md`](ARTIFACT-AND-DATA-AVAILABILITY.md).
+# 3. Framework Overview
 
-### Intellectual property
+The framework examined in this work provides a bounded environment for studying reproducible software execution.
 
-No implementation source, confidential material, patent claim, or ownership
-assertion is disclosed in this manuscript. See [`IP.md`](../IP.md).
+The publication intentionally avoids publication of:
 
-### Competing interests
+- implementation details,
+- algorithms,
+- internal architecture,
+- execution mechanisms,
+- validation procedures,
+- optimization strategies,
+- software artifacts.
 
-To be completed by the author(s) before publication.
+Only the conceptual evaluation framework is discussed.
 
-### Author contributions and acknowledgements
+At a high level, the framework consists of:
 
-To be completed by the author(s) before publication.
+1. A defined evaluation boundary.
+2. A controlled execution environment.
+3. Observation mechanisms.
+4. Comparison procedures.
+5. Documentation of assumptions.
+
+The purpose of these components is to support reproducibility analysis rather than system operation or deployment.
+
+---
+
+# 4. Evaluation Methodology
+
+## Controlled Observation
+
+Experiments are conducted within explicitly declared evaluation conditions.
+
+The intent is to reduce ambiguity regarding what is being compared and under which assumptions the comparison is considered valid.
+
+---
+
+## Outcome Comparison
+
+Multiple executions may be evaluated using predefined comparison criteria.
+
+The framework examines whether comparable conditions produce comparable outcomes within the declared scope.
+
+No claim is made that observations generalize beyond the evaluated setting.
+
+---
+
+## Interpretation Limits
+
+Observed results are interpreted only within the execution boundary of the study.
+
+Such observations do not automatically imply reproducibility for:
+
+- other environments,
+- other software systems,
+- other configurations,
+- future versions,
+- production workloads.
+
+---
+
+# 5. Discussion
+
+## Reproducibility as a Bounded Property
+
+This work adopts the position that reproducibility should be regarded as a bounded property rather than an absolute one.
+
+Meaningful comparison depends upon clear assumptions regarding:
+
+- what is observed,
+- how observations are made,
+- which influences are considered relevant,
+- and which influences fall outside the scope of evaluation.
+
+---
+
+## Importance of Explicit Assumptions
+
+Many disagreements regarding reproducibility arise from hidden assumptions.
+
+Making assumptions explicit improves:
+
+- comparability,
+- reviewability,
+- interpretation,
+- scientific communication.
+
+The framework therefore treats assumption documentation as a primary evaluation requirement.
+
+---
+
+## Limitations
+
+This publication does not provide:
+
+- implementation disclosure,
+- software artifacts,
+- executable systems,
+- architectural specifications,
+- performance claims,
+- hardware claims,
+- optimization claims.
+
+Any such topics remain outside the scope of this document.
+
+---
+
+# 6. Conclusion
+
+This work presents a bounded framework for studying reproducible software execution within explicitly declared assumptions and evaluation conditions.
+
+The framework is intended as a conceptual and methodological instrument for discussing reproducibility in complex software environments.
+
+Its contribution is not a specific implementation, architecture, algorithm, or system design.
+
+Instead, it provides a structured perspective on how reproducibility claims can be evaluated, interpreted, and communicated when the scope of observation is clearly defined.
+
+---
+
+# Declarations
+
+## Data and Artifact Availability
+
+No executable artifacts, implementation details, source code, measurement data, or operational systems are included in this publication.
+
+---
+
+## Intellectual Property
+
+This publication intentionally omits implementation mechanisms, algorithms, internal architectures, execution strategies, optimization methods, and proprietary technical material.
+
+---
+
+## Competing Interests
+
+None declared.
+
+---
+
+## Author Contributions
+
+Andreas Bender conceived the study, developed the framework, and prepared the manuscript.
+
+---
+
+## Acknowledgements
+
+The author thanks colleagues and reviewers who provided feedback on reproducibility methodology and evaluation boundaries.
