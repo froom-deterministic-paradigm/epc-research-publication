@@ -1,117 +1,202 @@
-# EPC Executive Summary for Hardware Manufacturers and Technical Stakeholders
-**Version:** 1.0  
-**Date:** 15 October 2026  
-**Status:** Research Report Supplement  
-**Author:** Andreas Bender, EPC Research Lead
+# Reproducible Execution Studies: Executive Summary
+
+**Version:** 2.0 (Public Research Edition)  
+**Date:** November 2026  
+**Status:** Public Research Summary  
+**Author:** Andreas Bender
 
 ---
 
-## Purpose and Positioning
+# Purpose and Positioning
 
-EPC (Execution Profile Contract) is a **bounded, deterministic software model** designed to make execution behavior reproducible under explicitly declared conditions. It is *not* a hardware simulator, *not* a microarchitectural predictor, and *not* a performance‑tuning tool. EPC provides:
+This document summarizes a research effort focused on the study of reproducible software execution within explicitly defined evaluation boundaries.
 
-- a **contract‑driven execution boundary**,  
-- a **controlled replay mechanism**,  
-- and a **deterministic abstract simulator profile** hosted on x64 systems.
+The work investigates how execution outcomes can be observed, compared, and interpreted when assumptions, conditions, and measurement criteria are clearly documented.
 
-The system is intended for **research, validation, and controlled experimentation**, not for hardware emulation or architectural claims.
+The project is not intended as a hardware model, hardware prediction system, performance optimization framework, or architectural benchmark. Its purpose is to provide a structured environment for evaluating execution reproducibility under controlled conditions.
 
 ---
 
-## What EPC Provides
+# What the Research Examines
 
-### 1. Deterministic Contract Execution
-- A versioned execution contract defines the reproducibility boundary.  
-- Guarantees apply only to **registered operators**, **normalized inputs**, and **fully controlled event traces**.  
-- Repeated executions under identical conditions produce **byte‑identical canonical outputs**.
+The research focuses on three questions:
 
-### 2. Controlled Replay
-- Replay is deterministic only when all relevant external events are controlled.  
-- Live or uncontrolled sources are **explicitly outside** the guarantee.  
-- Replay behavior is stable across independent processes.
+1. Under which conditions can software outcomes be meaningfully compared?
+2. How can reproducibility be evaluated within clearly declared assumptions?
+3. How can observations remain interpretable without conflating different measurement domains?
 
-### 3. Abstract x64‑Hosted Simulation
-- EPC includes a parameterized simulator profile mapping declared pipeline, memory, and control‑flow events to **abstract model cycles**.  
-- Model cycles are **not CPU cycles**, **not performance counters**, and **not predictions** of hardware behavior.  
-- The simulator is a **deterministic abstraction**, not a microarchitectural model.
+The emphasis is on methodology, evaluation boundaries, and result interpretation rather than implementation architecture.
 
 ---
 
-## Evidence from the Evaluation
+# Core Characteristics
 
-### A. Ten Independent Process Runs
-- Identical contract, input, event tape, and simulator profile.  
-- All ten processes produced **byte‑identical canonical states and model traces**.  
-- This confirms deterministic behavior **within the declared boundary**.
+## Explicit Evaluation Boundaries
 
-### B. Three Synthetic Workloads on One x64 Host
-- Native wall‑clock time, EPC runtime time, setup costs, and abstract model cycles were reported **separately**.  
-- EPC and native workloads perform **different work**; timing differences are **not** speed comparisons.  
-- Model cycles are **abstract costs**, not hardware measurements.
+Every observation is interpreted within a documented scope.
 
----
+This scope may include:
 
-## Why EPC Matters for Manufacturers
+- execution conditions,
+- evaluation assumptions,
+- observation criteria,
+- comparison rules.
 
-Although EPC does **not** simulate real hardware, it provides value in areas where **deterministic, contract‑bounded execution** is essential:
-
-### 1. Reproducible Software Experiments
-Useful for:
-- compiler validation,  
-- deterministic operator pipelines,  
-- controlled workload characterization.
-
-### 2. Early‑Stage Exploration of Abstract Execution Models
-EPC offers a stable environment for:
-- prototyping deterministic cost profiles,  
-- studying workload behavior without hardware noise,  
-- evaluating execution semantics under controlled conditions.
-
-### 3. Clear Separation of Concerns
-EPC distinguishes:
-- **software determinism** (runtime + contract),  
-- **abstract simulation** (model cycles),  
-- **hardware observation** (native measurements).
-
-This prevents misinterpretation and supports rigorous methodology.
+Results are only valid within the declared boundary.
 
 ---
 
-## Boundaries and Non‑Goals
+## Controlled Observation
 
-EPC does **not**:
+The framework provides an environment in which execution outcomes can be observed under repeatable conditions.
 
-- model real pipelines, caches, predictors, or hazards,  
-- predict performance or hardware behavior,  
-- generalize determinism beyond the tested configuration,  
-- provide cross‑platform guarantees,  
-- include implementation or raw measurement artifacts in the public package.
+The objective is to reduce ambiguity regarding:
 
-These boundaries are **intentional** and part of the scientific integrity of the project.
+- what is being measured,
+- how comparisons are performed,
+- and how results should be interpreted.
 
 ---
 
-## Conclusion
+## Reproducibility Analysis
 
-EPC demonstrates that **contract‑bounded deterministic execution and replay** can be achieved reliably within a strictly defined software scope. The abstract simulator provides reproducible model traces without claiming hardware fidelity. The evaluation confirms reproducibility for the tested configuration and clarifies the limits of the model.
+Observations focus on whether comparable conditions produce comparable outcomes.
 
-For manufacturers and technical stakeholders, EPC offers a **controlled, reproducible, and transparent environment** for studying deterministic execution behavior — without conflating software abstraction with hardware simulation.
+Interpretation is intentionally limited to the evaluated scenario.
+
+No statement is made about arbitrary software systems, uncontrolled environments, or untested conditions.
 
 ---
 
-## Declarations
+# Evaluation Approach
 
-### Data and Artifact Availability
-This publication package contains no executable artifact or raw measurement data.  
-See `ARTIFACT-AND-DATA-AVAILABILITY.md`.
+## Repeated Observation
 
-### Intellectual Property
-No implementation source, confidential material, patent claim, or ownership assertion is disclosed.  
-See `IP.md`.
+The research evaluates execution outcomes across multiple independent observation runs.
 
-### Competing Interests
-To be completed by the author(s).
+The purpose is to assess consistency under declared conditions rather than to establish universal guarantees.
 
-### Author Contributions and Acknowledgements
-To be completed by the author(s).
+---
 
+## Outcome Comparison
+
+Observed outcomes are compared using predefined evaluation criteria.
+
+The evaluation distinguishes between:
+
+- execution observations,
+- environmental conditions,
+- and interpretation of results.
+
+This separation helps avoid unsupported conclusions.
+
+---
+
+## Measurement Separation
+
+Different classes of observations are treated as distinct categories.
+
+Examples may include:
+
+- elapsed execution time,
+- setup overhead,
+- abstract evaluation metrics,
+- environment-specific observations.
+
+These categories are reported separately to reduce the risk of misinterpretation.
+
+---
+
+# Why This Work Matters
+
+Modern software systems increasingly involve:
+
+- complex execution environments,
+- multiple software layers,
+- external dependencies,
+- evolving configurations.
+
+As complexity grows, reproducibility becomes more difficult to assess.
+
+A structured evaluation framework helps improve:
+
+- transparency,
+- comparability,
+- documentation quality,
+- reproducibility discussions,
+- methodological rigor.
+
+---
+
+# Intended Applications
+
+The framework may be useful for:
+
+- software reproducibility studies,
+- execution analysis,
+- validation research,
+- controlled experimentation,
+- academic evaluation,
+- methodological investigations.
+
+The publication does not prescribe specific implementation strategies and does not depend on particular technologies or platforms.
+
+---
+
+# Boundaries and Non-Goals
+
+This publication does not:
+
+- disclose implementation details,
+- disclose algorithms,
+- disclose internal architectures,
+- disclose optimization techniques,
+- disclose execution mechanisms,
+- predict hardware behavior,
+- model physical processors,
+- establish performance characteristics,
+- provide unrestricted reproducibility guarantees.
+
+These limitations are intentional and form part of the research scope.
+
+---
+
+# Conclusion
+
+This work explores reproducible software execution as a bounded and explicitly documented property.
+
+The contribution lies in establishing a framework for evaluating, comparing, and interpreting software execution outcomes under controlled assumptions.
+
+Its purpose is not to disclose implementation technology but to support rigorous discussion of reproducibility, evaluation methodology, and result interpretation within clearly defined boundaries.
+
+---
+
+# Declarations
+
+## Data and Artifact Availability
+
+No executable artifacts, implementation details, source code, operational systems, or raw measurement data are included in this publication.
+
+---
+
+## Intellectual Property
+
+Implementation mechanisms, algorithms, internal architectures, execution strategies, optimization approaches, and proprietary technical material are intentionally excluded from this document.
+
+---
+
+## Competing Interests
+
+None declared.
+
+---
+
+## Author Contributions
+
+Andreas Bender conceived the study, developed the framework, and prepared the manuscript.
+
+---
+
+## Acknowledgements
+
+The author thanks colleagues and reviewers who contributed feedback regarding reproducibility methodology, evaluation design, and interpretation boundaries.
